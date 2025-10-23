@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Loader2 from "lucide-react/dist/esm/icons/loader-2";
-import Lock from "lucide-react/dist/esm/icons/lock";
-import Mail from "lucide-react/dist/esm/icons/mail";
-import User from "lucide-react/dist/esm/icons/user";
+import {Loader2} from "lucide-react";
+import {Lock} from "lucide-react";
+import {Mail} from "lucide-react";
+import {User} from "lucide-react";
 
 const SignupPage = () => {
   const [name, setName] = useState("");
@@ -32,18 +32,14 @@ const SignupPage = () => {
 
     // Get existing users from localStorage, or initialize an empty array
     const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
-
-    // Check if user with the same email already exists
-    const userExists = existingUsers.some((user: any) => user.email === email);
-
-    if (userExists) {
-      alert(
-        "A user with this email already exists. Please use a different email or log in."
-      );
-      setIsLoading(false);
-      return;
-    }
-
+      existingUsers.some((user: unknown) => {
+          // Use a type guard to ensure 'user' is an object and has an 'email' property
+          if (typeof user === 'object' && user !== null && 'email' in user) {
+              return (user as { email: string }).email === email;
+          }
+          return false;
+      });
+      const userExists = existingUsers.some((user: any) => user.email === email);
     const newUser = {
       id: Date.now(), // Simple unique ID
       name,
